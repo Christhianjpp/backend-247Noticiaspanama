@@ -56,8 +56,10 @@ const crearCategoria = async (req, res = response) => {
 
     try {
 
-
-        const categoriaModal = await Categoria(nombre)
+        const data = {
+            nombre
+        }
+        const categoriaModal = await Categoria(data)
         const categoria = await categoriaModal.save()
 
         res.json({
@@ -79,7 +81,7 @@ const crearCategoria = async (req, res = response) => {
 
 const actualizarCategoria = async (req, res = response) => {
     const id = req.params.id
-    let { nombre, estado } = req.body
+    let { nombre } = req.body
 
     if (req.body.nombre) {  // si envia el nombre, se verifica si existe
 
@@ -97,8 +99,8 @@ const actualizarCategoria = async (req, res = response) => {
 
     try {
         const data = {
-            nombre,
-            estado
+            nombre
+
         }
         const categoria = await Categoria.findByIdAndUpdate(id, data, { new: true })
 
