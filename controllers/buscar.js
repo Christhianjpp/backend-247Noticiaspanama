@@ -1,0 +1,104 @@
+const { response } = require("express");
+const { ObjectId } = require('mongoose').Types
+
+const Noticia = require("../models/Noticia");
+const Categoria = require("../models/Categoria");
+
+const coleccionesPermitdas = [
+    'categoria',
+    'noticias',
+    'noticiaporcategoria'
+]
+
+
+const buscarNoticias = async (termino = '', req, res = response) => {
+
+    const { limite = 10, desde = 0 } = req.query
+    if (!termino) {
+        const [total, noticias] = await Promise.all([
+            Noticia.countDocuments(),
+            Noticia.find()
+                .sort({ "fecha": -1 })
+                .skip(Number(desde))
+                .limit(Number(limite))
+            // .populate('usuario', 'name')
+            // .populate('categoria', 'nombre')
+        ])
+
+        res.json({
+            results: (noticias) ? [total, noticias] : []
+        })
+
+        return
+    }
+
+    const regex = new RegExp(termino, 'i')
+    const noticias = await Noticia.find({
+        $or: [{ titulo: regex }, { cuerpo: regex }],
+        $and: [{ estado: true }]
+    })
+
+    res.json({
+        results: (noticias) ? [noticias] : []
+    })
+}
+
+const noticiaporcategoria = async (termino = '', res = response) => {
+
+    const esMongoID = ObjectId.isValid(termino) // true
+
+    if (esMongoID) {
+        const noticias = await Noticia.find({ categoria: ObjectId(termino), state: true })
+            .populate('categoria', 'nombre')
+        return res.json({
+            results: (noticias) ? [noticias] : []
+        })
+    }
+
+    const regex = termino.toUpperCase()
+    const categorias = await Categoria.find({ nombre: regex, estado: true })
+
+    const noticias = await Noticia.find({ categoria: categorias[0]?._id, state: true })
+        .populate('categoria', 'nombre')
+
+    res.json({
+        results: (noticias) ? [noticias] : []
+    })
+}
+
+
+const buscar = (req, res = response) => {
+
+    const { coleccion, termino } = req.params
+
+    if (!coleccionesPermitdas.includes(coleccion)) {
+        return res.status(400).json({
+            msg: `las colecciones permitidas son ${coleccionesPermitdas}`
+        })
+    }
+
+    switch (coleccion) {
+        case "categoria":
+
+            break
+        case "noticias":
+            buscarNoticias(termino, req, res)
+            break
+
+        case "noticiaporcategoria":
+            noticiaporcategoria(termino, res)
+            break
+        default:
+            res.status(500).json({
+                msg: 'hable con el administrador'
+            })
+
+    }
+
+}
+
+
+
+module.exports = {
+    buscar
+}
