@@ -56,13 +56,8 @@ const crearCategoria = async (req, res = response) => {
 
     try {
 
-        const data = {
-            nombre,
-            estado: req.body.estado,
-            usuario: req.uid
-        }
 
-        const categoriaModal = await Categoria(data)
+        const categoriaModal = await Categoria(nombre)
         const categoria = await categoriaModal.save()
 
         res.json({

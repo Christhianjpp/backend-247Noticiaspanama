@@ -48,8 +48,8 @@ const obtenerNoticia = async (req, res = response) => {
 
 const crearNoticia = async (req, res = response) => {
     const data = req.body
-    data.user = req.uid
-
+    data.usuario = req.uid
+    console.log(data)
     const { urlNoticia } = req.body
     const url = await Noticia.findOne({ urlNoticia })
     if (url) {
