@@ -5,6 +5,11 @@ const EtiquetaSchema = Schema({
         type: String,
         required: true,
         unique: true
+    },
+    uid: {
+        type: Number,
+        required: true,
+        unique: true
     }
 
 })

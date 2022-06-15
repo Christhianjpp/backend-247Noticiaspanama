@@ -25,7 +25,7 @@ const obtenerEtiquetas = async (req, res = response) => {
 
 const crearEtiqueta = async (req, res = response) => {
     const nombre = req.body.nombre.toUpperCase()
-    const estado = req.body.estado
+    const uid = req.body.uid
     const etiqueaDB = await Etiqueta.findOne({ nombre })
 
     if (etiqueaDB) {
@@ -39,7 +39,7 @@ const crearEtiqueta = async (req, res = response) => {
 
         const data = {
             nombre,
-            estado
+            uid
         }
         const etiquetaModal = await Etiqueta(data)
         const etiqueta = await etiquetaModal.save()
