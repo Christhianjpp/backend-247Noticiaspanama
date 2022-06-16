@@ -6,13 +6,12 @@ const setVistas = async (req = request, res = response) => {
     const id = req.params.id
 
     try {
-        let { vistas } = await Noticia.findById(id, { vistas: 1, _id: 0 })
+        let { vistas = 0 } = await Noticia.findById(id, { vistas: 1, _id: 0 })
 
         vistas++
         const data = {
             vistas
         }
-
         const noticia = await Noticia.findByIdAndUpdate(id, data, { new: true })
         const nuevaVista = noticia.vistas
 

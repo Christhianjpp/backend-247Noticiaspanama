@@ -10,12 +10,13 @@ const obtenerNoticias = async (req, res = response) => {
 
     // const total = await Noticia.countDocuments({ state: true })
 
-    const { limite = 6, desde = 0 } = req.query
+    const { limite = 9, desde = 0 } = req.query
     const query = { estado: true }
 
     const [total, noticias] = await Promise.all([
         Noticia.countDocuments(query),
         Noticia.find(query)
+            .sort({ "fecha": -1 })
             .skip(Number(desde))
             .limit(Number(limite))
             .populate('usuario', 'name')
