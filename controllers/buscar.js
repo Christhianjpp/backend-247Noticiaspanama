@@ -9,7 +9,58 @@ const coleccionesPermitdas = [
     'noticias',
     'noticiaporcategoria',
     'noticiasporetiqueta',
+    'categoriayetiqueta'
 ]
+
+const categoriayetiqueta = async (termino = '', req, res = response) => {
+
+    if (!termino) {
+        return res.json({
+            msg: "no hay termino",
+            termino
+        })
+    }
+
+    // const { limite = 6, desde = 0 } = req.query
+
+    // const { nombre } = await Categoria.findById(termino)
+
+    // const noticias = await Noticia.find({
+    //     $or: [{ "etiquetas": { $elemMatch: { nombre: nombre } } }, { categoria: termino }],
+    //     $and: [{ estado: true }]
+    // })
+    //     .sort({ "fecha": -1 })
+    //     .skip(Number(desde))
+    //     .limit(Number(limite))
+    //     .populate('usuario', 'name')
+    //     .populate('categoria', 'nombre')
+
+
+    const { limite = 6, desde = 0 } = req.query
+    const { nombre } = await Categoria.findById(termino)
+    const query = { estado: true }
+
+
+    const [total, noticias] = await Promise.all([
+        Noticia.countDocuments({
+            $or: [{ "etiquetas": { $elemMatch: { nombre: nombre } } }, { categoria: termino }],
+            $and: [{ estado: true }]
+        }), Noticia.find({
+            $or: [{ "etiquetas": { $elemMatch: { nombre: nombre } } }, { categoria: termino }],
+            $and: [{ estado: true }]
+        })
+            .sort({ "fecha": -1 })
+            .skip(Number(desde))
+            .limit(Number(limite))
+            .populate('usuario', 'name')
+            .populate('categoria', 'nombre')
+    ])
+
+    return res.json({
+        results: (noticias) ? [total, noticias] : []
+    })
+
+}
 
 
 const noticiasporetiqueta = async (termino = '', req, res = response) => {
@@ -25,15 +76,12 @@ const noticiasporetiqueta = async (termino = '', req, res = response) => {
 
     if (esMongoID) {
 
-        // const noticias = await Noticia.find({ "etiquetas": { $elemMatch: { _id: termino } }, estado: true })
-        // return res.json({
-        //     results: (noticias) ? [noticias] : []
-        // })
-
         const { limite = 5, desde = 0 } = req.query
 
 
         const noticias = await Noticia.find({ "etiquetas": { $elemMatch: { _id: termino } }, estado: true })
+
+
             .sort({ "fecha": -1 })
             .skip(Number(desde))
             .limit(Number(limite))
@@ -57,8 +105,8 @@ const buscarNoticias = async (termino = '', req, res = response) => {
                 .sort({ "fecha": -1 })
                 .skip(Number(desde))
                 .limit(Number(limite))
-            // .populate('usuario', 'name')
-            // .populate('categoria', 'nombre')
+                .populate('usuario', 'name')
+                .populate('categoria', 'nombre')
         ])
 
         res.json({
@@ -127,6 +175,9 @@ const buscar = (req, res = response) => {
             break
         case "noticiasporetiqueta":
             noticiasporetiqueta(termino, req, res)
+            break
+        case "categoriayetiqueta":
+            categoriayetiqueta(termino, req, res)
             break
         default:
             res.status(500).json({
