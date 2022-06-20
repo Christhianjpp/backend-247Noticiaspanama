@@ -1,0 +1,29 @@
+//base
+@import "./base/base";
+@import "./base/settings";
+
+// Pages
+@import "./pages/auth";
+
+// Components Admin
+@import "./components/admin/newsModal";
+@import "./components/admin/AdminScreen";
+
+// Components Header
+@import "./components/header/header";
+@import "./components/header/top";
+@import "./components/header/logo";
+@import "./components/header/navbar";
+
+
+// News Category
+@import "./components/newsCategory/impacto";
+@import "./components/newsCategory/newNews";
+@import "./components/newsCategory/viewsNews";
+
+@import "./components/newsCategory/viewsCategory";
+
+
+@import "./components/_socialMedia";
+// Footer
+@import "./components/footer/footer.scss";
