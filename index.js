@@ -26,6 +26,7 @@ app.use('/api/categoria', require('./routes/categoria'))
 app.use('/api/buscar', require('./routes/buscar'))
 app.use('/api/vistas', require('./routes/vistas'))
 app.use('/api/etiqueta', require('./routes/etiqueta'))
+app.use('/api/visitcounter', require('./routes/visitcounter'))
 
 app.use('*', (req, res) => {
     res.sendFile(__dirname + '/public/index.html')

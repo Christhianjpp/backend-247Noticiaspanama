@@ -22,7 +22,7 @@ const obtenerNoticias = async (req, res = response) => {
             .populate('usuario', 'name')
             .populate('categoria', 'nombre')
     ])
-    res.jsonp({
+    res.json({
         ok: true,
         msg: 'Obtener Noticias',
         total,
@@ -38,7 +38,7 @@ const obtenerNoticia = async (req, res = response) => {
         .populate('usuario', 'name')
         .populate('categoria', 'nombre')
 
-    res.jsonp({
+    res.json({
         ok: true,
         msg: 'Obtener Noticia!',
         noticia
@@ -66,13 +66,13 @@ const crearNoticia = async (req, res = response) => {
 
         const noticia = await noticiaModal.save()
 
-        res.status(201).jsonp({
+        res.status(201).json({
             ok: true,
             noticia
         })
     } catch (error) {
         console.log(error)
-        res.status(500).jsonp({
+        res.status(500).json({
             ok: false,
             msg: 'Hable con el administrador',
         })
@@ -89,7 +89,7 @@ const actualizarNoticia = async (req, res = response) => {
 
         const nuevaNoticia = await Noticia.findByIdAndUpdate(id, noticia, { new: true })
 
-        res.jsonp({
+        res.json({
             ok: true,
             msg: 'Actualizar Noticia',
             nuevaNoticia
@@ -97,7 +97,7 @@ const actualizarNoticia = async (req, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).jsonp({
+        res.status(500).json({
             ok: false,
             msg: 'Hable con el administrador',
 
@@ -113,14 +113,14 @@ const borrarNoticia = async (req, res = response) => {
     try {
         await Noticia.findByIdAndDelete(id)
 
-        res.jsonp({
+        res.json({
             ok: true,
             msg: 'Noticia borrada'
         })
 
     } catch (error) {
         console.log(error)
-        res.status(507).jsonp({
+        res.status(507).json({
             ok: true,
             msg: 'Hable con el administrador',
             id
