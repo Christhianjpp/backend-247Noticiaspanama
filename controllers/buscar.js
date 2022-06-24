@@ -9,8 +9,36 @@ const coleccionesPermitdas = [
     'noticias',
     'noticiaporcategoria',
     'noticiasporetiqueta',
-    'categoriayetiqueta'
+    'categoriayetiqueta',
+    'masvistos'
 ]
+
+const masvistos = async (termino = '', req, res = response) => {
+
+    const { limite = 6, desde = 0 } = req.query
+    if (!termino) {
+        const [total, noticias] = await Promise.all([
+            Noticia.countDocuments(),
+            Noticia.find()
+                .sort({ "vistas": -1 })
+                .skip(Number(desde))
+                .limit(Number(limite))
+                .populate('usuario', 'name')
+                .populate('categoria', 'nombre')
+        ])
+
+        res.json({
+            results: (noticias) ? [total, noticias] : []
+        })
+
+        return
+    }
+
+    return res.json({
+        msg: "mas vistos",
+        termino
+    })
+}
 
 const categoriayetiqueta = async (termino = '', req, res = response) => {
 
@@ -154,8 +182,7 @@ const noticiaporcategoria = async (termino = '', res = response) => {
 const buscar = (req, res = response) => {
 
     const { coleccion, termino } = req.params
-    console.log(coleccion)
-    console.log(termino)
+
     if (!coleccionesPermitdas.includes(coleccion)) {
         return res.status(400).json({
             msg: `las colecciones permitidas son ${coleccionesPermitdas}`
@@ -178,6 +205,9 @@ const buscar = (req, res = response) => {
             break
         case "categoriayetiqueta":
             categoriayetiqueta(termino, req, res)
+            break
+        case 'masvistos':
+            masvistos(termino, req, res)
             break
         default:
             res.status(500).json({
