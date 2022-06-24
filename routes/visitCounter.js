@@ -1,4 +1,5 @@
 const { Router } = require('express')
+
 const { getVisitCounter, putVisitCounter } = require('../controllers/visitCounter')
 
 const router = Router()
